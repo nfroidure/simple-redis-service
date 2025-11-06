@@ -24,7 +24,7 @@
     ]
   },
   "name": "simple-redis-service",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "A simple Redis wrapper around the ioredis module.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
