@@ -38,16 +38,16 @@ describe('Redis service', () => {
     await $.destroy();
 
     expect(log.mock.calls).toMatchInlineSnapshot(`
-      [
-        [
-          "warning",
-          "🏧 - Redis Service initialized!",
-        ],
-        [
-          "warning",
-          "🔌 - Quitting Redis server...",
-        ],
-      ]
-    `);
+[
+  [
+    "warning",
+    "🏧 - Redis service initialized!",
+  ],
+  [
+    "warning",
+    "🔌 - Quitting Redis server...",
+  ],
+]
+`);
   });
 });

@@ -1,4 +1,5 @@
 import { Redis } from 'ioredis';
+import { printStackTrace, YError } from 'yerror';
 import { autoProvider, location } from 'knifecycle';
 import type { RedisOptions } from 'ioredis';
 import type { Provider } from 'knifecycle';
@@ -84,10 +85,24 @@ async function initRedis<
       : {}),
   });
 
-  log('warning', `🏧 - Redis Service initialized!`);
+  log('warning', `🏧 - Redis service initialized!`);
+
+  const fatalErrorPromise = new Promise<void>((_, reject) => {
+    client.once('error', (err) => {
+      const wrappedError = YError.wrap(err, 'E_REDIS');
+
+      log(
+        'error-stack',
+        `💥 - Redis service error:`,
+        printStackTrace(wrappedError),
+      );
+      reject(wrappedError);
+    });
+  });
 
   return {
     service: client,
+    fatalErrorPromise,
     async dispose(): Promise<void> {
       log('warning', '🔌 - Quitting Redis server...');
       client.quit();

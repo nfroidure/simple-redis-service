@@ -16,5 +16,5 @@ The `redis` service wraps ioredis to make it work
  directly with Knifecycle based frameworks like
  Whook.
 
-[See in context](./src/index.ts#L7-L12)
+[See in context](./src/index.ts#L8-L13)
 
