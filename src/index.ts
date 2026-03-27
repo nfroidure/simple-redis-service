@@ -1,9 +1,7 @@
-import { Redis } from 'ioredis';
 import { printStackTrace, YError } from 'yerror';
-import { autoProvider, location } from 'knifecycle';
-import type { RedisOptions } from 'ioredis';
-import type { Provider } from 'knifecycle';
-import type { LogService } from 'common-services';
+import { autoProvider, location, type Provider } from 'knifecycle';
+import { Redis, type RedisOptions } from 'ioredis';
+import { type LogService } from 'common-services';
 
 /* Architecture Note #1: Redis Service
 
@@ -16,12 +14,12 @@ export type RedisEnv<
   T extends string = typeof DEFAULT_REDIS_PASSWORD_ENV_NAME,
 > = Record<T | 'REDIS_HOST' | 'REDIS_PORT', string>;
 export type RedisService = InstanceType<typeof Redis>;
-export type RedisConfig<
+export interface RedisConfig<
   T extends string = typeof DEFAULT_REDIS_PASSWORD_ENV_NAME,
-> = {
+> {
   REDIS?: RedisOptions;
   REDIS_PASSWORD_ENV_NAME?: T;
-};
+}
 export type RedisDependencies<
   T extends string = typeof DEFAULT_REDIS_PASSWORD_ENV_NAME,
 > = RedisConfig<T> & {
@@ -34,8 +32,6 @@ export const DEFAULT_REDIS_OPTIONS: RedisOptions = {};
 export const DEFAULT_REDIS_PASSWORD_ENV_NAME = 'REDIS_PASSWORD';
 
 // Docs: https://github.com/luin/ioredis/blob/master/API.md
-
-export default location(autoProvider(initRedis), import.meta.url);
 
 /**
  * Instantiate the Redis service
@@ -109,3 +105,5 @@ async function initRedis<
     },
   };
 }
+
+export default location(autoProvider(initRedis), import.meta.url);

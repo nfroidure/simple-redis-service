@@ -1,8 +1,10 @@
 import { describe, beforeEach, test, jest, expect } from '@jest/globals';
 import { constant, Knifecycle } from 'knifecycle';
-import initRedisService from './index.js';
-import type { RedisService, RedisConfig } from './index.js';
-import type { LogService } from 'common-services';
+import initRedisService, {
+  type RedisService,
+  type RedisConfig,
+} from './index.js';
+import { type LogService } from 'common-services';
 
 describe('Redis service', () => {
   let $: Knifecycle;
