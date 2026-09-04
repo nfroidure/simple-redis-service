@@ -12,7 +12,7 @@ The `redis` service wraps ioredis to make it work
 
 export type RedisEnv<
   T extends string = typeof DEFAULT_REDIS_PASSWORD_ENV_NAME,
-> = Record<T | 'REDIS_HOST' | 'REDIS_PORT', string>;
+> = Partial<Record<T | 'REDIS_HOST' | 'REDIS_PORT' | 'REDIS_USERNAME', string>>;
 export type RedisService = InstanceType<typeof Redis>;
 export interface RedisConfig<
   T extends string = typeof DEFAULT_REDIS_PASSWORD_ENV_NAME,
@@ -72,13 +72,28 @@ async function initRedis<
   ENV,
   log,
 }: RedisDependencies<T>): Promise<Provider<RedisService>> {
+  const host = ENV.REDIS_HOST || REDIS.host;
+  const port = ENV.REDIS_PORT ? parseInt(ENV.REDIS_PORT, 10) : REDIS.port;
+  const username = ENV.REDIS_USERNAME;
+  const password = ENV[REDIS_PASSWORD_ENV_NAME];
+
+  if (!host) {
+    throw new YError('E_MISSING_ENV_VAR', ['REDIS_HOST']);
+  }
+  if (typeof port === 'undefined') {
+    if (!ENV.REDIS_PORT) {
+      throw new YError('E_MISSING_ENV_VAR', ['REDIS_PORT']);
+    }
+  } else if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+    throw new YError('E_INVALID_REDIS_PORT', [port]);
+  }
+
   const client = new Redis({
     ...REDIS,
-    host: ENV.REDIS_HOST || REDIS.host,
-    port: ENV.REDIS_PORT ? parseInt(ENV.REDIS_PORT, 10) : REDIS.port,
-    ...(ENV[REDIS_PASSWORD_ENV_NAME]
-      ? { password: ENV[REDIS_PASSWORD_ENV_NAME] }
-      : {}),
+    host,
+    port,
+    ...(password ? { password } : {}),
+    ...(username ? { username } : {}),
   });
 
   log('warning', `🏧 - Redis service initialized!`);
